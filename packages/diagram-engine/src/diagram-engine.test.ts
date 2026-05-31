@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { analyzeDocument, generateDiagramBundle, optimizeLayout, reviewArchitecture } from "./index";
+import { analyzeDocument, generateDiagramBundle, generateDiagramBundleWithAi, optimizeLayout, reviewArchitecture } from "./index";
 
 describe("diagram engine", () => {
   it("generates all required editable formats from a prompt", () => {
@@ -27,5 +27,24 @@ describe("diagram engine", () => {
   it("returns optimized layout bundle", () => {
     const optimized = optimizeLayout({ prompt: "Create a zero trust security architecture" });
     expect(optimized.model.nodes[1].x).toBeGreaterThan(optimized.model.nodes[0].x);
+  });
+
+  it("varies local fallback components by prompt domain", () => {
+    const insurance = generateDiagramBundle({ prompt: "Create an insurance claims processing architecture" });
+    const retail = generateDiagramBundle({ prompt: "Create a retail order fulfillment architecture" });
+
+    expect(insurance.model.nodes.map((node) => node.label)).toContain("Claims Portal");
+    expect(retail.model.nodes.map((node) => node.label)).toContain("Order Management");
+    expect(insurance.mermaid).not.toEqual(retail.mermaid);
+  });
+
+  it("uses the AI bundle entrypoint with mock fallback when no OpenAI key is configured", async () => {
+    const result = await generateDiagramBundleWithAi(
+      { prompt: "Generate a healthcare patient data platform", themeId: "azure" },
+      { provider: "mock" }
+    );
+
+    expect(result.model.nodes.map((node) => node.label)).toContain("Patient Portal");
+    expect(result.plantUml).toContain("@startuml");
   });
 });

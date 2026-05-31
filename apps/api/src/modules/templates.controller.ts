@@ -18,7 +18,7 @@ export class TemplatesController {
   }
 
   @Get(":id/generate")
-  generate(@Param("id") id: string, @Query("themeId") themeId?: string) {
+  async generate(@Param("id") id: string, @Query("themeId") themeId?: string) {
     const input = templateToInput(id, themeId);
     return input ? this.ai.generate(input) : { error: "Template not found" };
   }

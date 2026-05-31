@@ -11,7 +11,7 @@ AKDIA is a working monorepo scaffold for an enterprise-grade AI diagramming stud
 - **Template package** with reference architectures and diagram templates across cloud, data, AI, security, BPMN, UML, and operating-model use cases.
 - **Infrastructure compose file** for PostgreSQL, Redis, and Elasticsearch.
 
-The default AI provider is deterministic and local (`AI_PROVIDER=mock`) so the app works without external API keys. The NestJS agent interfaces are ready for OpenAI, Anthropic, or private model adapters.
+The default AI provider is deterministic and local (`AI_PROVIDER=mock`) so the app works without external API keys. For real ChatGPT/OpenAI generation, create `.env.local` or `.env` from `.env.example`, set `AI_PROVIDER=openai`, and provide `OPENAI_API_KEY`. Use an OpenAI platform API key, not a ChatGPT account password.
 
 ## Quick start
 
@@ -25,6 +25,23 @@ Open `http://localhost:3000` for the studio. To run the API separately:
 ```bash
 npm run dev:api
 ```
+
+## Enable ChatGPT/OpenAI diagram generation
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local`:
+
+```bash
+AI_PROVIDER=openai
+OPENAI_API_KEY=sk-your-openai-api-key
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_BASE_URL=https://api.openai.com/v1
+```
+
+Restart the local web/API sessions after changing environment variables. The app keeps the API key server-side and sends only prompts/document text from the browser to the local API route.
 
 Optional infrastructure:
 

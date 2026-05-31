@@ -155,3 +155,11 @@ export interface GenerateDiagramInput {
   themeId?: string;
   documentText?: string;
 }
+
+export interface AiProviderOptions {
+  provider?: "mock" | "openai";
+  apiKey?: string;
+  model?: string;
+  baseUrl?: string;
+  timeoutMs?: number;
+}

@@ -19,15 +19,47 @@ const ARCHETYPE_COMPONENTS: Record<string, string[]> = {
   "solution-architecture": ["Experience", "API Layer", "Business Services", "Integration", "Data Platform", "AI Services", "Security", "Operations"]
 };
 
+const DOMAIN_COMPONENTS: Array<{ terms: string[]; components: string[] }> = [
+  {
+    terms: ["bank", "banking", "payment", "loan", "credit", "kyc", "fraud"],
+    components: ["Digital Banking App", "Customer Identity", "KYC & Risk Scoring", "Payments Hub", "Core Banking", "Fraud Analytics", "Regulatory Reporting", "Case Management"]
+  },
+  {
+    terms: ["insurance", "claim", "claims", "policy", "underwriting"],
+    components: ["Claims Portal", "FNOL Intake", "Policy Admin", "Rules Engine", "Adjuster Workbench", "Payment Service", "Claims Data Mart", "Fraud Review"]
+  },
+  {
+    terms: ["health", "patient", "clinical", "hospital", "ehr", "payer"],
+    components: ["Patient Portal", "EHR Integration", "FHIR API", "Clinical Workflow", "Care Management", "PHI Data Store", "Consent Service", "Population Analytics"]
+  },
+  {
+    terms: ["retail", "commerce", "shop", "order", "inventory", "store"],
+    components: ["Storefront", "Order Management", "Inventory Service", "Pricing Engine", "Customer 360", "Fulfillment Network", "Personalization AI", "Loyalty Platform"]
+  },
+  {
+    terms: ["manufacturing", "factory", "iot", "plant", "supply chain"],
+    components: ["Plant Floor Systems", "IoT Gateway", "MES", "ERP", "Quality Analytics", "Digital Twin", "Supply Chain Control Tower", "Predictive Maintenance"]
+  },
+  {
+    terms: ["hr", "employee", "workforce", "recruiting", "talent"],
+    components: ["Employee Portal", "HRIS", "Recruiting Workflow", "Learning Platform", "Payroll Integration", "Workforce Analytics", "Policy Assistant", "Case Queue"]
+  }
+];
+
 export function buildDiagramModel(input: GenerateDiagramInput): DiagramModel {
   const source = [input.prompt, input.documentText].filter(Boolean).join("\n");
   const type = inferDiagramType(source, input.type);
   const theme = getTheme(input.themeId);
   const analysis = input.documentText ? analyzeDocument(input.documentText, input.prompt) : undefined;
   const promptConcepts = extractPromptConcepts(input.prompt);
-  const baseline = analysis?.architectureComponents.length ? analysis.architectureComponents : ARCHETYPE_COMPONENTS[type] ?? ARCHETYPE_COMPONENTS["solution-architecture"];
+  const domainComponents = findDomainComponents(source);
+  const baseline = analysis?.architectureComponents.length
+    ? analysis.architectureComponents
+    : domainComponents.length
+      ? domainComponents
+      : ARCHETYPE_COMPONENTS[type] ?? ARCHETYPE_COMPONENTS["solution-architecture"];
   const concepts = mergeComponents(baseline, promptConcepts).slice(0, 10);
-  const groups = createGroups(theme.primary, concepts.length);
+  const groups = createGroups(theme.primary, concepts.length, type);
   const nodes = concepts.map((label, index) => createNode(label, index, groups[index % groups.length].id));
   const edges = createEdges(nodes, type);
   const title = createTitle(input.prompt, type, analysis?.title);
@@ -63,9 +95,14 @@ function mergeComponents(primary: string[], secondary: string[]): string[] {
   return Array.from(new Set([...primary, ...secondary])).filter(Boolean);
 }
 
-function createGroups(primary: string, componentCount: number): DiagramGroup[] {
+function findDomainComponents(source: string): string[] {
+  const normalized = source.toLowerCase();
+  return DOMAIN_COMPONENTS.find((domain) => domain.terms.some((term) => normalized.includes(term)))?.components ?? [];
+}
+
+function createGroups(primary: string, componentCount: number, type: string): DiagramGroup[] {
   const groupCount = componentCount > 8 ? 4 : 3;
-  const labels = ["Experience & Channels", "Core Platform", "Data & AI", "Security & Operations"];
+  const labels = groupLabelsForType(type);
   return Array.from({ length: groupCount }, (_, index) => ({
     id: `group_${index + 1}`,
     label: labels[index],
@@ -77,7 +114,16 @@ function createGroups(primary: string, componentCount: number): DiagramGroup[] {
   })).map((group, index) => ({ ...group, color: index === 1 ? `${primary}18` : group.color }));
 }
 
-function createNode(label: string, index: number, group: string): DiagramNode {
+function groupLabelsForType(type: string): string[] {
+  if (type.includes("business") || type === "bpmn") return ["Trigger & Intake", "Decisioning", "Fulfillment", "Controls & Reporting"];
+  if (type.includes("data") || type.includes("etl")) return ["Sources", "Ingestion & Processing", "Storage & Serving", "Governance"];
+  if (type.includes("security") || type.includes("zero-trust") || type.includes("identity")) return ["Subjects", "Policy Enforcement", "Protected Resources", "Monitoring"];
+  if (type.includes("devops") || type.includes("cicd")) return ["Plan & Code", "Build & Secure", "Release & Run", "Observe"];
+  if (type.includes("rag") || type.includes("ai") || type.includes("agent")) return ["Experience", "AI Orchestration", "Knowledge & Tools", "Governance"];
+  return ["Experience & Channels", "Core Platform", "Data & AI", "Security & Operations"];
+}
+
+export function createNode(label: string, index: number, group: string): DiagramNode {
   const column = index % 4;
   const row = Math.floor(index / 4);
   return {
@@ -116,17 +162,17 @@ function createEdges(nodes: DiagramNode[], type: string): DiagramEdge[] {
   return edges;
 }
 
-function createTitle(prompt: string, type: string, documentTitle?: string): string {
+export function createTitle(prompt: string, type: string, documentTitle?: string): string {
   if (documentTitle && documentTitle.length > 12) return documentTitle;
   const cleaned = prompt.replace(/^(create|generate|build|make)\s+/i, "").replace(/diagram$/i, "").trim();
   return cleaned.length > 8 ? titleCase(cleaned) : titleCase(type.replace(/-/g, " "));
 }
 
-function titleCase(value: string): string {
+export function titleCase(value: string): string {
   return value.replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1));
 }
 
-function inferKind(label: string): string {
+export function inferKind(label: string): string {
   const lower = label.toLowerCase();
   if (/db|database|warehouse|lake|vector|aurora|postgres|snowflake|bigquery/.test(lower)) return "data store";
   if (/api|gateway|apigee|front door/.test(lower)) return "integration";
@@ -136,7 +182,7 @@ function inferKind(label: string): string {
   return "application component";
 }
 
-function inferIcon(label: string): string {
+export function inferIcon(label: string): string {
   const lower = label.toLowerCase();
   if (lower.includes("aws") || lower.includes("lambda") || lower.includes("cloudfront")) return "aws";
   if (lower.includes("azure") || lower.includes("entra")) return "azure";

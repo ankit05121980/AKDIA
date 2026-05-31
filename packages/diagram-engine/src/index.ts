@@ -3,6 +3,7 @@ export * from "./themes";
 export * from "./analyzer";
 export * from "./model-builder";
 export * from "./generators";
+export * from "./ai-generator";
 
 import { buildDiagramModel } from "./model-builder";
 import { bundle } from "./generators";

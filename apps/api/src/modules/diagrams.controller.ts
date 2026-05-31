@@ -14,7 +14,7 @@ export class DiagramsController {
   }
 
   @Post("generate")
-  generate(@Body() body: GenerateDiagramDto) {
+  async generate(@Body() body: GenerateDiagramDto) {
     return this.ai.generate(body);
   }
 
@@ -30,8 +30,8 @@ export class DiagramsController {
 
   @Post("export")
   @Header("Content-Type", "application/json")
-  export(@Body() body: ExportDiagramDto) {
-    const bundle = this.ai.generate(body);
+  async export(@Body() body: ExportDiagramDto) {
+    const bundle = await this.ai.generate(body);
     const map = {
       mermaid: bundle.mermaid,
       plantuml: bundle.plantUml,

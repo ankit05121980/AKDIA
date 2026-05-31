@@ -1,15 +1,20 @@
 import { Injectable } from "@nestjs/common";
-import { analyzeDocument, generateDiagramBundle, optimizeLayout, reviewArchitecture, type DiagramBundle, type GenerateDiagramInput } from "@akdia/diagram-engine";
+import { analyzeDocument, generateDiagramBundle, generateDiagramBundleWithAi, optimizeLayout, reviewArchitecture, type DiagramBundle, type GenerateDiagramInput } from "@akdia/diagram-engine";
 
 @Injectable()
 export class AiOrchestratorService {
-  generate(input: GenerateDiagramInput): DiagramBundle {
-    return generateDiagramBundle(input);
+  async generate(input: GenerateDiagramInput): Promise<DiagramBundle> {
+    return generateDiagramBundleWithAi(input, {
+      provider: process.env.AI_PROVIDER === "mock" ? "mock" : "openai",
+      apiKey: process.env.OPENAI_API_KEY,
+      model: process.env.OPENAI_MODEL,
+      baseUrl: process.env.OPENAI_BASE_URL
+    });
   }
 
-  analyzeDocument(text: string, title?: string) {
+  async analyzeDocument(text: string, title?: string) {
     const analysis = analyzeDocument(text, title);
-    const bundle = generateDiagramBundle({ prompt: analysis.title, documentText: text, themeId: "enterprise-blue" });
+    const bundle = await this.generate({ prompt: analysis.title, documentText: text, themeId: "enterprise-blue" });
     return {
       analysis,
       generated: {
