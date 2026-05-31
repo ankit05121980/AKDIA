@@ -1,7 +1,11 @@
 import { Body, Controller, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import type { Express } from "express";
 import { AiOrchestratorService } from "../services/ai-orchestrator.service.js";
+
+interface UploadedDocumentFile {
+  buffer: Buffer;
+  originalname: string;
+}
 
 @Controller("documents")
 export class DocumentsController {
@@ -14,7 +18,7 @@ export class DocumentsController {
 
   @Post("upload")
   @UseInterceptors(FileInterceptor("file"))
-  upload(@UploadedFile() file: Express.Multer.File) {
+  upload(@UploadedFile() file: UploadedDocumentFile) {
     const extractedText = file.buffer.toString("utf8");
     return this.ai.analyzeDocument(extractedText || file.originalname, file.originalname);
   }

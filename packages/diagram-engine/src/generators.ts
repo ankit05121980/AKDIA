@@ -87,7 +87,7 @@ export function toSvg(model: DiagramModel): string {
 
 export function toPngDataUri(model: DiagramModel): string {
   const svg = toSvg(model);
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+  return `data:image/svg+xml;base64,${encodeBase64(svg)}`;
 }
 
 export function toPptModel(model: DiagramModel): PptDeckModel {
@@ -140,4 +140,15 @@ export function bundle(model: DiagramModel): DiagramBundle {
 
 function safeId(id: string): string {
   return id.replace(/[^A-Za-z0-9_]/g, "_");
+}
+
+function encodeBase64(value: string): string {
+  if (typeof globalThis.btoa === "function") {
+    return globalThis.btoa(unescape(encodeURIComponent(value)));
+  }
+
+  const runtime = globalThis as typeof globalThis & {
+    Buffer?: { from(input: string): { toString(encoding: "base64"): string } };
+  };
+  return runtime.Buffer?.from(value).toString("base64") ?? "";
 }
