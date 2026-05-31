@@ -1,0 +1,37 @@
+{
+  "name": "akdia-enterprise-ai-diagram-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Enterprise AI-powered diagram and architecture studio monorepo.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @akdia/web",
+    "dev:api": "npm run start:dev -w @akdia/api",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "diagramming",
+    "architecture",
+    "ai",
+    "mermaid",
+    "plantuml",
+    "drawio",
+    "nextjs",
+    "nestjs"
+  ],
+  "author": "AKDIA",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/node": "latest",
+    "prettier": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}
