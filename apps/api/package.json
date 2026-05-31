@@ -1,0 +1,36 @@
+{
+  "name": "@akdia/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:dev": "tsx watch src/main.ts",
+    "build": "nest build",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@akdia/asset-library": "file:../../packages/asset-library",
+    "@akdia/diagram-engine": "file:../../packages/diagram-engine",
+    "@akdia/templates": "file:../../packages/templates",
+    "@elastic/elasticsearch": "latest",
+    "@nestjs/common": "latest",
+    "@nestjs/config": "latest",
+    "@nestjs/core": "latest",
+    "@nestjs/platform-express": "latest",
+    "cache-manager": "latest",
+    "class-transformer": "latest",
+    "class-validator": "latest",
+    "ioredis": "latest",
+    "multer": "latest",
+    "pg": "latest",
+    "reflect-metadata": "latest",
+    "rxjs": "latest"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "latest",
+    "@types/express": "latest",
+    "@types/multer": "latest",
+    "@types/pg": "^8.20.0",
+    "tsx": "^4.22.4"
+  }
+}

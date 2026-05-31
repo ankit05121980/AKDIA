@@ -1,0 +1,38 @@
+{
+  "name": "@akdia/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "start": "next start",
+    "build": "next build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@akdia/asset-library": "file:../../packages/asset-library",
+    "@akdia/diagram-engine": "file:../../packages/diagram-engine",
+    "@akdia/templates": "file:../../packages/templates",
+    "@xyflow/react": "latest",
+    "clsx": "latest",
+    "fabric": "latest",
+    "konva": "latest",
+    "lucide-react": "latest",
+    "mermaid": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-konva": "latest"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "@playwright/test": "latest",
+    "tailwindcss": "latest"
+  }
+}
