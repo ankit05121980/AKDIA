@@ -1,11 +1,12 @@
-import { Body, Controller, Get, Header, Post } from "@nestjs/common";
+import { Body, Controller, Get, Header, Inject, Post } from "@nestjs/common";
 import { themes } from "@akdia/diagram-engine";
 import { ExportDiagramDto, GenerateDiagramDto } from "../dto.js";
 import { AiOrchestratorService } from "../services/ai-orchestrator.service.js";
 
 @Controller("diagrams")
 export class DiagramsController {
-  constructor(private readonly ai: AiOrchestratorService) {}
+  @Inject(AiOrchestratorService)
+  private readonly ai!: AiOrchestratorService;
 
   @Get("themes")
   themes() {

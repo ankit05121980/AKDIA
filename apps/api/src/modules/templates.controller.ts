@@ -1,10 +1,11 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Get, Inject, Param, Query } from "@nestjs/common";
 import { getTemplateScalePlan, listTemplates, templateToInput } from "@akdia/templates";
 import { AiOrchestratorService } from "../services/ai-orchestrator.service.js";
 
 @Controller("templates")
 export class TemplatesController {
-  constructor(private readonly ai: AiOrchestratorService) {}
+  @Inject(AiOrchestratorService)
+  private readonly ai!: AiOrchestratorService;
 
   @Get()
   list(@Query("q") q = "") {

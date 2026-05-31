@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Inject, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { AiOrchestratorService } from "../services/ai-orchestrator.service.js";
 
@@ -9,7 +9,8 @@ interface UploadedDocumentFile {
 
 @Controller("documents")
 export class DocumentsController {
-  constructor(private readonly ai: AiOrchestratorService) {}
+  @Inject(AiOrchestratorService)
+  private readonly ai!: AiOrchestratorService;
 
   @Post("analyze")
   analyzeText(@Body() body: { text: string; title?: string }) {

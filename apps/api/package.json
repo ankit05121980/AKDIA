@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start:dev": "nest start --watch",
+    "start:dev": "tsx watch src/main.ts",
     "build": "nest build",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -30,6 +30,7 @@
     "@nestjs/cli": "latest",
     "@types/express": "latest",
     "@types/multer": "latest",
-    "@types/pg": "^8.20.0"
+    "@types/pg": "^8.20.0",
+    "tsx": "^4.22.4"
   }
 }
