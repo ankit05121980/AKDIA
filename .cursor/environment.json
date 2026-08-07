@@ -1,0 +1,20 @@
+{
+  "name": "AKDIA Enterprise AI Diagram Studio",
+  "install": "npm install && npx playwright install chromium",
+  "terminals": [
+    {
+      "name": "web",
+      "command": "npm run dev",
+      "description": "Next.js web studio (http://localhost:3000, open /studio for the diagram app)."
+    },
+    {
+      "name": "api",
+      "command": "npm run dev:api",
+      "description": "NestJS API (http://localhost:4000). Optional; the studio's prompt-to-diagram flow runs in the web app itself."
+    }
+  ],
+  "ports": [
+    { "name": "web", "port": 3000 },
+    { "name": "api", "port": 4000 }
+  ]
+}
